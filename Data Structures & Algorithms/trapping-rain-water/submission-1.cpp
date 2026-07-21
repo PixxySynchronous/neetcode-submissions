@@ -1,0 +1,28 @@
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        //a block of water can stay above any position in the array as long as there is a left
+        // and a right boundary. The height of such a block of water would be the min(max(left side, right side))
+        // - h[i]. If the difference is negative or 0, no water can be stored on it. If positive, the value tells how
+        // many water blocks can be stored. 
+        // We will require the knowledge of max bars to the left and right side of h[i], which we can find via prefix
+        // and suffix arrays. 
+        int n = height.size(); 
+        vector<int> prefix (n);
+        int maxHeight = height[0]; 
+        prefix[0] = 0; //Left side of the first element is 0 as no boundary exists. 
+        for (int i = 1; i<n; i++){
+            prefix[i] = max(maxHeight,height[i-1]); 
+            maxHeight = max(maxHeight, height[i]);
+        }
+        int water = 0; 
+        int maxRheight = 0;  
+        for (int i = n-1; i>=0; i--){
+            if(min(prefix[i],maxRheight) - height[i]>0){
+                water += (min(prefix[i],maxRheight) - height[i]);
+            }
+            maxRheight = max(maxRheight, height[i]);
+        }
+        return water; 
+    }
+};
